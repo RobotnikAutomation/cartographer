@@ -17,6 +17,7 @@
 #include "cartographer/io/points_processor_pipeline_builder.h"
 
 #include "absl/memory/memory.h"
+#include "cartographer/io/axis_range_filtering_points_processor.h"
 #include "cartographer/io/coloring_points_processor.h"
 #include "cartographer/io/counting_points_processor.h"
 #include "cartographer/io/fixed_ratio_sampling_points_processor.h"
@@ -85,6 +86,7 @@ void RegisterBuiltInPointsProcessors(
   RegisterPlainPointsProcessor<FixedRatioSamplingPointsProcessor>(builder);
   RegisterPlainPointsProcessor<FrameIdFilteringPointsProcessor>(builder);
   RegisterPlainPointsProcessor<MinMaxRangeFilteringPointsProcessor>(builder);
+  RegisterPlainPointsProcessor<AxisRangeFilteringPointsProcessor>(builder);
   RegisterPlainPointsProcessor<VerticalRangeFilteringPointsProcessor>(builder);
   RegisterPlainPointsProcessor<OutlierRemovingPointsProcessor>(builder);
   RegisterPlainPointsProcessor<ColoringPointsProcessor>(builder);
