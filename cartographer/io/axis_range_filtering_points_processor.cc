@@ -29,23 +29,42 @@ AxisRangeFilteringPointsProcessor::FromDictionary(
     PointsProcessor* const next) {
   return absl::make_unique<AxisRangeFilteringPointsProcessor>(
       dictionary->GetDouble("min"), dictionary->GetDouble("max"),
-      next);
+      dictionary->GetString("axis"), next);
 }
 
 AxisRangeFilteringPointsProcessor::AxisRangeFilteringPointsProcessor(
     const double min, const double max,
-    PointsProcessor* next)
+    const std::string axis, PointsProcessor* next)
     : min_(min), max_(max),
-      next_(next) {}
+      axis_(axis), next_(next) {}
 
 void AxisRangeFilteringPointsProcessor::Process(
     std::unique_ptr<PointsBatch> batch) {
   absl::flat_hash_set<int> to_remove;
   for (size_t i = 0; i < batch->points.size(); ++i) {
-    const float distance =
-        batch->points[i].position.z() - batch->points[i].origin.z();
-    if (!(min_ <= distance && distance <= max_) ) {
-      to_remove.insert(i);
+    if (axis_ == "x")
+    {
+      const float distance =
+          batch->points[i].position.x() - batch->points[i].origin.x();
+      if (!(min_ <= distance && distance <= max_) ) {
+        to_remove.insert(i);
+      }
+    }
+    else if (axis_ == "y")
+    {
+      const float distance =
+          batch->points[i].position.y() - batch->points[i].origin.y();
+      if (!(min_ <= distance && distance <= max_) ) {
+        to_remove.insert(i);
+      }
+    }
+    else if (axis_ == "z")
+    {
+      const float distance =
+          batch->points[i].position.z() - batch->points[i].origin.z();
+      if (!(min_ <= distance && distance <= max_) ) {
+        to_remove.insert(i);
+      }
     }
   }
   RemovePoints(to_remove, batch.get());

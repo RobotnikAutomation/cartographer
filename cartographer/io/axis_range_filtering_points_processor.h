@@ -25,13 +25,13 @@
 namespace cartographer {
 namespace io {
 
-// Filters all points which distance in the chosen axis from their 'origin'
+// Filters all points which distance in the chosen axis (x, y, z) from their 'origin'
 // exceeds 'max' or 'min'.
 class AxisRangeFilteringPointsProcessor : public PointsProcessor {
  public:
   constexpr static const char* kConfigurationFileActionName =
       "axis_range_filter";
-  AxisRangeFilteringPointsProcessor(double min, double max,
+  AxisRangeFilteringPointsProcessor(double min, double max, std::string axis,
                                         PointsProcessor* next);
   static std::unique_ptr<AxisRangeFilteringPointsProcessor> FromDictionary(
       common::LuaParameterDictionary* dictionary, PointsProcessor* next);
@@ -49,6 +49,7 @@ class AxisRangeFilteringPointsProcessor : public PointsProcessor {
  private:
   const double min_;
   const double max_;
+  const std::string axis_;
   PointsProcessor* const next_;
 };
 
