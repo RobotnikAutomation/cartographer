@@ -29,7 +29,13 @@ include("${PROJECT_SOURCE_DIR}/cmake/functions.cmake")
 google_initialize_cartographer_project()
 google_enable_testing()
 
-find_package(absl REQUIRED)
+include(FetchContent)
+FetchContent_Declare(
+  absl
+  GIT_REPOSITORY https://github.com/abseil/abseil-cpp.git
+  GIT_TAG        d902eb869bcfacc1bad14933ed9af4bed006d481
+)
+FetchContent_MakeAvailable(absl)
 set(BOOST_COMPONENTS iostreams)
 if(WIN32)
   list(APPEND BOOST_COMPONENTS zlib)
@@ -348,6 +354,10 @@ install(
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
+)
+install(
+  EXPORT absl
+  DESTINATION lib/cmake/absl
 )
 
 foreach(HDR ${INSTALL_SOURCE_HDRS})
