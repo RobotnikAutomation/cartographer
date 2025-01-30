@@ -17,6 +17,10 @@
 set -o errexit
 set -o verbose
 
+sudo apt-get install -y stow ninja-build
+
+cd /tmp
+rm -rf abseil-cpp
 git clone https://github.com/abseil/abseil-cpp.git
 cd abseil-cpp
 git checkout d902eb869bcfacc1bad14933ed9af4bed006d481
