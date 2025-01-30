@@ -1,3 +1,0 @@
-buildPackage(
-  upstreamProjects: 'rcomponent,robotnik_msgs'
-)
