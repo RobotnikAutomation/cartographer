@@ -41,6 +41,10 @@ class FileResolver {
 // A parameter dictionary that gets loaded from Lua code.
 class LuaParameterDictionary {
  public:
+  enum class ReferenceCount { YES, NO };
+  LuaParameterDictionary(const std::string& code,
+                         ReferenceCount reference_count,
+                         std::unique_ptr<FileResolver> file_resolver);
   // Constructs the dictionary from a Lua Table specification.
   LuaParameterDictionary(const std::string& code,
                          std::unique_ptr<FileResolver> file_resolver);
@@ -80,10 +84,7 @@ class LuaParameterDictionary {
   GetArrayValuesAsDictionaries();
 
  private:
-  enum class ReferenceCount { YES, NO };
-  LuaParameterDictionary(const std::string& code,
-                         ReferenceCount reference_count,
-                         std::unique_ptr<FileResolver> file_resolver);
+
 
   // For GetDictionary().
   LuaParameterDictionary(lua_State* L, ReferenceCount reference_count,
