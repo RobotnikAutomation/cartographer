@@ -32,6 +32,10 @@ namespace sensor {
 struct FixedFramePoseData {
   common::Time time;
   absl::optional<transform::Rigid3d> pose;
+  // Per-sample weight scales relative to the global option weights.
+  // nullopt means "use global weight unchanged" (backward compatible).
+  absl::optional<double> translation_weight;
+  absl::optional<double> rotation_weight;
 };
 
 // Converts 'pose_data' to a proto::FixedFramePoseData.

@@ -101,6 +101,19 @@ std::unique_ptr<transform::Rigid3d> Interpolate(
   return nullptr;
 }
 
+// Returns per-sample weight scales for the fixed frame constraint nearest in
+// time to 'time'. Falls back to (1.0, 1.0) when no override is stored.
+std::pair<double, double> LookupFixedFrameWeightScales(
+    const sensor::MapByTime<sensor::FixedFramePoseData>& map_by_time,
+    const int trajectory_id, const common::Time time) {
+  const auto it = map_by_time.lower_bound(trajectory_id, time);
+  if (it == map_by_time.EndOfTrajectory(trajectory_id)) {
+    return {1.0, 1.0};
+  }
+  return {it->translation_weight.value_or(1.0),
+          it->rotation_weight.value_or(1.0)};
+}
+
 // Selects a trajectory node closest in time to the landmark observation and
 // applies a relative transform from it.
 transform::Rigid3d GetInitialLandmarkPose(
@@ -523,9 +536,12 @@ void OptimizationProblem3D::Solve(
         continue;
       }
 
+      const auto weight_scales = LookupFixedFrameWeightScales(
+          fixed_frame_pose_data_, trajectory_id, node_data.time);
       const Constraint::Pose constraint_pose{
-          *fixed_frame_pose, options_.fixed_frame_pose_translation_weight(),
-          options_.fixed_frame_pose_rotation_weight()};
+          *fixed_frame_pose,
+          options_.fixed_frame_pose_translation_weight() * weight_scales.first,
+          options_.fixed_frame_pose_rotation_weight() * weight_scales.second};
 
       if (!fixed_frame_pose_initialized) {
         transform::Rigid3d fixed_frame_pose_in_map;

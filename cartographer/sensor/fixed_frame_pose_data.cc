@@ -28,15 +28,29 @@ proto::FixedFramePoseData ToProto(const FixedFramePoseData& pose_data) {
   if (pose_data.pose.has_value()) {
     *proto.mutable_pose() = transform::ToProto(pose_data.pose.value());
   }
+  if (pose_data.translation_weight.has_value()) {
+    proto.set_translation_weight_scale(pose_data.translation_weight.value());
+  }
+  if (pose_data.rotation_weight.has_value()) {
+    proto.set_rotation_weight_scale(pose_data.rotation_weight.value());
+  }
   return proto;
 }
 
 FixedFramePoseData FromProto(const proto::FixedFramePoseData& proto) {
-  return FixedFramePoseData{common::FromUniversal(proto.timestamp()),
-                            proto.has_pose()
-                                ? absl::optional<transform::Rigid3d>(
-                                      transform::ToRigid3(proto.pose()))
-                                : absl::optional<transform::Rigid3d>()};
+  FixedFramePoseData data;
+  data.time = common::FromUniversal(proto.timestamp());
+  data.pose = proto.has_pose()
+                  ? absl::optional<transform::Rigid3d>(
+                        transform::ToRigid3(proto.pose()))
+                  : absl::optional<transform::Rigid3d>();
+  if (proto.translation_weight_scale() > 0.0) {
+    data.translation_weight = proto.translation_weight_scale();
+  }
+  if (proto.rotation_weight_scale() > 0.0) {
+    data.rotation_weight = proto.rotation_weight_scale();
+  }
+  return data;
 }
 
 }  // namespace sensor

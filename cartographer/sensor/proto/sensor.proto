@@ -71,6 +71,9 @@ message OdometryData {
 message FixedFramePoseData {
   int64 timestamp = 1;
   transform.proto.Rigid3d pose = 2;
+  // Per-sample weight scales (0.0 means not set; use global option weight).
+  double translation_weight_scale = 3;
+  double rotation_weight_scale = 4;
 }
 
 // Proto representation of ::cartographer::sensor::LandmarkData.
